@@ -1,0 +1,34 @@
+[tasks.clean]
+command = "cargo"
+args = ["clean"]
+
+[tasks.format]
+install_crate = "rustfmt"
+command = "cargo"
+args = ["fmt", "--", "--emit=files"]
+
+[tasks.clippy]
+command = "cargo"
+args = ["clippy"]
+dependencies = ["clean"]
+channels = ["beta", "nightly"]
+
+[tasks.test]
+command = "cargo"
+args = ["test"]
+dependencies = ["clean"]
+channels = ["beta", "nightly"]
+
+[tasks.release]
+script = [
+    "cargo +stable build --release"
+]
+dependencies = ["test", "clippy"]
+channels = ["beta", "nightly"]
+
+[tasks.pack]
+script = [
+    "strip target/release/rust-app-template",
+    "upx --best --lzma target/release/rust-app-template"
+]
+dependencies = ["release"]
